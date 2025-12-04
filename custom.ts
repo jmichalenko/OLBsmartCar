@@ -129,4 +129,18 @@ namespace smartCar {
     }
 
     function readRawGyroZ(): number {
-        pins.i2cWriteNumber(
+        pins.i2cWriteNumber(MPU_ADDR, GYRO_Z_H, NumberFormat.UInt8BE);
+        let raw_data = pins.i2cReadBuffer(MPU_ADDR, 2);
+        let h = raw_data[0]
+        let l = raw_data[1]
+        let value = (h << 8) | l
+        if (value >= 0x8000) value = value - 0x10000
+        return value / 131.0
+    }
+}
+
+// *** THIS EXPORT IS CRITICAL FOR THE DROPDOWN ***
+export enum TurnDirection {
+    Left,
+    Right
+}
